@@ -12,15 +12,15 @@ class ServiceLocator {
   Future<void> init() async {
     /// main
 
-    BaseMainRemoteDataSource baseMainRemoteDataSource = MainRemoteDataSource();
-    sl.registerLazySingleton(() => baseMainRemoteDataSource);
+    BaseNewsLetterRemoteDataSource baseNewsLetterRemoteDataSource = NewsLetterRemoteDataSource();
+    sl.registerLazySingleton(() => baseNewsLetterRemoteDataSource);
 
     BaseMainRepository baseMainRepository = MainRepository(sl());
     sl.registerLazySingleton(() => baseMainRepository);
 
     /// blocs
-    NewsLetterBloc mainBloc = NewsLetterBloc(MainInitial());
-    sl.registerLazySingleton(() => mainBloc);
+    NewsLetterBloc newsLetterBloc = NewsLetterBloc(NewsLetterInitial());
+    sl.registerLazySingleton(() => newsLetterBloc);
 
   }
 }

@@ -26,7 +26,10 @@ class PostNewsScreen extends StatelessWidget {
                 onPressed: () {
                   context.pop();
                 },
-                icon: Icon(Icons.arrow_back_ios_new,size: 8.sp,)),
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 7.sp,
+                )),
             title: Center(
               child: Text(
                 "Add News",
@@ -41,6 +44,9 @@ class PostNewsScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20.sp),
                 child: Column(
                   children: [
+                    SizedBox(
+                      height: 3.h,
+                    ),
                     defaultFormField(
                         validator: (value) {
                           if (value == "") {
@@ -115,9 +121,12 @@ class PostNewsScreen extends StatelessWidget {
                                     description: descriptionController.text,
                                     head: headController.text,
                                     images: bloc.pickedImages)));
-                            descriptionController.clear();
-                            headController.clear();
-                            bloc.pickedImages = [];
+                            if (state is PostNewsLetterSuccessState) {
+                              context.pop();
+                              descriptionController.clear();
+                              headController.clear();
+                              bloc.pickedImages = [];
+                            }
                           }
                         },
                         text: "Post"),

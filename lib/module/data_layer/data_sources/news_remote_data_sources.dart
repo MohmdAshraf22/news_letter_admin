@@ -4,16 +4,16 @@ import 'package:flutter/services.dart';
 import '../../domain_layer/entities/news.dart';
 import '../models/news_model.dart';
 
-abstract class BaseMainRemoteDataSource {
+abstract class BaseNewsLetterRemoteDataSource {
   Stream<List<NewsModel>> getNewsStream();
   Stream<bool> postNewsStream({required NewsModel newsModel});
   Stream<bool> editNewsStream({required NewsModel newsModel});
-  Stream<bool> deleteNewsStream({required String id, required String imageUrl});
+  Stream<bool> deleteNewsStream({required String id, required List<String> imagesUrl});
 }
 
-class MainRemoteDataSource extends BaseMainRemoteDataSource {
+class NewsLetterRemoteDataSource extends BaseNewsLetterRemoteDataSource {
   final CollectionReference newsCollection =
-      FirebaseFirestore.instance.collection("news");
+      FirebaseFirestore.instance.collection("news_letter");
 
   @override
   Stream<List<NewsModel>> getNewsStream() {
@@ -26,11 +26,13 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
 
   @override
   Stream<bool> deleteNewsStream(
-      {required String id, required String imageUrl}) {
+      {required String id, required List<String> imagesUrl}) {
     return Stream.fromFuture(
       newsCollection.doc(id).delete().then((_) {
-        String imageName = getImageName(url: imageUrl);
-        FirebaseStorage.instance.ref().child("news/$imageName").delete();
+        for(String imageUrl in imagesUrl) {
+          String imageName = getImageName(url: imageUrl);
+          FirebaseStorage.instance.ref().child("news_letter/$imageName").delete();
+        }
         return true;
       }).catchError((error) {
         return false;
@@ -41,27 +43,26 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
   @override
   Stream<bool> editNewsStream({required NewsModel newsModel}) {
     return Stream.fromFuture(() async {
-      if (newsModel.imagesUrlDeleted != null) {
-        print("object");
-        print(newsModel.imagesUrlDeleted );
+      if (newsModel.imagesUrlDeleted != null && newsModel.imagesUrlDeleted!.isNotEmpty) {
+        print("newsModel.imagesUrlDeleted ${newsModel.imagesUrlDeleted}");
         for (String image in newsModel.imagesUrlDeleted!) {
-          print(image);
-          deleteImageFromFirebaseStorage(getImageName(url: image));
-          print("deleted");
+          deleteImageFromFirebaseStorage(fileName: getImageName(url: image));
         }
       }
-      if (newsModel.images != null) {
+      if (newsModel.images != null && newsModel.images!.isNotEmpty) {
+        newsModel.imagesUrl = [];
         for (var image in newsModel.images!) {
-          String downloadUrl = await uploadImageToFirebaseStorage(
-              filePath: image.imageMemory, fileName: image.imageName);
-          newsModel.imagesUrl.add(downloadUrl);
+          await uploadImageToFirebaseStorage(
+              filePath: image.imageMemory, fileName: image.imageName).then((downloadUrl){
+            newsModel.imagesUrl.add(downloadUrl);
+          });
         }
       }
       try {
         await newsCollection.doc(newsModel.id).update(newsModel.toJson());
         return true;
       } catch (error) {
-        print('Error posting news: $error');
+        print('Error Editing news: $error');
         return false;
       }
     }());
@@ -70,6 +71,7 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
   @override
   Stream<bool> postNewsStream({required NewsModel newsModel}) {
     return Stream.fromFuture(() async {
+      newsModel.imagesUrl = [];
       for (var image in newsModel.images!) {
         String downloadUrl = await uploadImageToFirebaseStorage(
             filePath: image.imageMemory, fileName: image.imageName);
@@ -86,18 +88,15 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
   }
 
   Future<String> uploadImageToFirebaseStorage(
-      {Uint8List? filePath, String? fileName}) async {
-    if (filePath != null && fileName != null) {
+      {required Uint8List filePath,required String fileName}) async {
       Reference storageReference =
-          FirebaseStorage.instance.ref().child("news/$fileName");
+          FirebaseStorage.instance.ref().child("news_letter/$fileName");
       await storageReference.putData(filePath);
       return await storageReference.getDownloadURL();
-    }
-    return "";
   }
 
-  void deleteImageFromFirebaseStorage(String fileName) async {
-    FirebaseStorage.instance.ref().child("news/$fileName}").delete();
+  void deleteImageFromFirebaseStorage({required String fileName}) async {
+    FirebaseStorage.instance.ref().child("news_letter/$fileName").delete();
   }
 
   String getImageName({required String url}) {

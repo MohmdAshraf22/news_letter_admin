@@ -1,3 +1,4 @@
+import 'package:admin_news_letter/core/utils/color_manager.dart';
 import 'package:admin_news_letter/core/utils/navigation_manager.dart';
 import 'package:admin_news_letter/module/presentation_layer/screens/post_news_letter_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class AllNewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NewsLetterBloc bloc = sl()..add(GetNewsEvent());
+    NewsLetterBloc bloc = sl();
     return BlocBuilder<NewsLetterBloc, NewsLetterState>(
       builder: (context, state) {
         return Scaffold(
@@ -24,11 +25,13 @@ class AllNewsScreen extends StatelessWidget {
               ),
             ),
           ),
-          floatingActionButton: FloatingActionButton(onPressed: (){
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add,color: ColorManager.white,),
+              onPressed: (){
             context.push(const PostNewsScreen());
           }),
           body: Padding(
-                padding: EdgeInsets.all(8.0.sp),
+                padding: EdgeInsets.all(8.sp),
                 child: ListView.separated(
                     itemBuilder: (context, index) =>
                         buildNewsWidget(bloc.newsLetter[index],context),

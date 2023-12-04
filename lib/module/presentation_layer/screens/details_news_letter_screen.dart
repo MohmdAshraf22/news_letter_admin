@@ -11,9 +11,9 @@ import '../../../core/utils/color_manager.dart';
 import '../bloc/main_bloc.dart';
 import '../components/components.dart';
 
-class EditNewsLetterScreen extends StatelessWidget {
+class DetailsNewsLetterScreen extends StatelessWidget {
   final NewsModel newsModel;
-  const EditNewsLetterScreen({super.key, required this.newsModel});
+  const DetailsNewsLetterScreen({super.key, required this.newsModel});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,8 @@ class EditNewsLetterScreen extends StatelessWidget {
     NewsLetterBloc bloc = sl();
     descriptionController.text = newsModel.description;
     headController.text = newsModel.head;
-    bloc.imagesUrl = newsModel.imagesUrl;
+    bloc.imagesUrl = [];
+    bloc.imagesUrl = bloc.imagesUrl + newsModel.imagesUrl;
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return BlocBuilder<NewsLetterBloc, NewsLetterState>(
       builder: (context, state) {
@@ -33,6 +34,16 @@ class EditNewsLetterScreen extends StatelessWidget {
                   context.pop();
                 },
                 icon: Icon(Icons.arrow_back_ios_new,size: 8.sp,)),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    bloc.add(DeleteNewsEvent(
+                      id: newsModel.id,imagesUrl: newsModel.imagesUrl
+                    ));
+                    context.pop();
+                  },
+                  icon: Icon(Icons.delete,size: 8.sp,)),
+            ],
             title: Center(
               child: Text(
                 "Edit News",
@@ -122,7 +133,6 @@ class EditNewsLetterScreen extends StatelessWidget {
                                   ),
                                   IconButton(
                                     onPressed: () {
-                                      headController.text = "s";
                                       bloc.add(DeleteImageUrlEvent(
                                           imageUrl: imageUrl));
                                     },
@@ -154,16 +164,19 @@ class EditNewsLetterScreen extends StatelessWidget {
                             bloc.add(EditNewsEvent(
                                 newsModel: NewsModel(
                                     imagesUrl: const [],
-                                    id: DateTime.now().toString(),
+                                    id: newsModel.id,
                                     date: DateTime.now().toString(),
                                     description: descriptionController.text,
                                     head: headController.text,
                                     imagesUrlDeleted: imagesUrlDeleted,
                                     images: bloc.pickedImages)));
-                            descriptionController.clear();
-                            headController.clear();
-                            bloc.pickedImages = [];
-                            bloc.imagesUrl = [];
+                            if(state is EditNewsLetterSuccessState){
+                              context.pop();
+                              descriptionController.clear();
+                              headController.clear();
+                              bloc.pickedImages = [];
+                              bloc.imagesUrl = [];
+                            }
                           }
                         },
                         text: "Edit"),

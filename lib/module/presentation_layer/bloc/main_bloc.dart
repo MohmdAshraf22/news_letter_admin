@@ -1,4 +1,5 @@
 import 'package:admin_news_letter/module/domain_layer/entities/image_data.dart';
+import 'package:admin_news_letter/module/domain_layer/use_cases/delete_news_use_case.dart';
 import 'package:admin_news_letter/module/domain_layer/use_cases/edit_news_use_case.dart';
 import 'package:admin_news_letter/module/domain_layer/use_cases/get_news_use_case.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +18,12 @@ class NewsLetterBloc extends Bloc<NewsLetterEvent, NewsLetterState> {
   List<NewsModel> newsLetter  = [];
   List<ImageData> pickedImages = [];
   List<String> imagesUrl = [];
-  NewsLetterBloc(MainInitial mainInitial) : super(MainInitial()) {
+  NewsLetterBloc(NewsLetterInitial mainInitial) : super(NewsLetterInitial()) {
     on<NewsLetterEvent>((event, emit) async {
       if (event is GetNewsEvent) {
         emit(GetNewsLetterLoadingState());
         GetNewsUseCase(sl()).get().listen((event) {
           newsLetter = event;
-          print(event);
         });
         emit(GetNewsLetterSuccessState());
       }
@@ -46,23 +46,38 @@ class NewsLetterBloc extends Bloc<NewsLetterEvent, NewsLetterState> {
         emit(DeleteImageUrlState());
       }
       else if (event is PostNewsEvent) {
+        emit(PostNewsLetterLoadingState());
         PostNewsUseCase(sl()).post(newsModel: event.newsModel).listen((event) {
           if(event){
             print("posted");
+            GetNewsEvent();
+            emit(PostNewsLetterSuccessState());
           }else{
             print("error in posting");
           }
         });
-        emit(PostNewsLetterSuccessState());
       }else if (event is EditNewsEvent) {
+        emit(EditNewsLetterLoadingState());
         EditNewsUseCase(sl()).edit(newsModel: event.newsModel).listen((event) {
           if(event){
             print("Edited");
+            emit(EditNewsLetterSuccessState());
+            GetNewsEvent();
           }else{
             print("error in editing");
           }
         });
-        emit(EditNewsLetterSuccessState());
+      }else if (event is DeleteNewsEvent) {
+        emit(DeleteNewsLetterLoadingState());
+        DeleteNewsUseCase(sl()).delete(imagesUrl: event.imagesUrl,id: event.id).listen((event) {
+          if(event){
+            print("Deleted");
+            emit(DeleteNewsLetterSuccessState());
+            GetNewsEvent();
+          }else{
+            print("error in deleting");
+          }
+        });
       }
     });
   }

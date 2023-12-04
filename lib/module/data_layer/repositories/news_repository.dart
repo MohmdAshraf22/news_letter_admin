@@ -6,7 +6,7 @@ import '../../domain_layer/repsitories/base_news_repository.dart';
 import '../data_sources/news_remote_data_sources.dart';
 
 class MainRepository extends BaseMainRepository {
-  BaseMainRemoteDataSource baseMainRemoteDataSource;
+  BaseNewsLetterRemoteDataSource baseMainRemoteDataSource;
   MainRepository(this.baseMainRemoteDataSource);
 
   @override
@@ -22,7 +22,7 @@ class MainRepository extends BaseMainRepository {
     return baseMainRemoteDataSource.editNewsStream(newsModel: newsModel);
   }
   @override
-  Stream<bool> deleteNewsStream({required String id,required String imageUrl}) {
-    return baseMainRemoteDataSource.deleteNewsStream(id: id,imageUrl: imageUrl);
+  Stream<bool> deleteNewsStream({required String id,required List<String> imagesUrl}) {
+    return baseMainRemoteDataSource.deleteNewsStream(id: id,imagesUrl: imagesUrl);
   }
 }

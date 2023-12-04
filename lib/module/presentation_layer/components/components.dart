@@ -2,9 +2,8 @@ import 'dart:ui' as ui;
 import 'package:admin_news_letter/core/utils/navigation_manager.dart';
 import 'package:admin_news_letter/module/data_layer/models/news_model.dart';
 import 'package:admin_news_letter/module/presentation_layer/bloc/main_bloc.dart';
-import 'package:admin_news_letter/module/presentation_layer/screens/edit_news_letter_screen.dart';
+import 'package:admin_news_letter/module/presentation_layer/screens/details_news_letter_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import '../../../core/services/dep_injection.dart';
 import '../../../core/utils/color_manager.dart';
@@ -15,11 +14,10 @@ import 'package:http/http.dart' as http;
 
 import '../../domain_layer/entities/news.dart';
 
-Widget buildNewsWidget(NewsModel news,BuildContext context) {
+Widget buildNewsWidget(NewsModel news, BuildContext context) {
   Duration timeAgo = DateTime.now().difference(DateTime.parse(news.date));
   String timeAgoString = calculateTimeAgo(timeAgo);
-
-  Widget dateRow = Row(
+  Widget firstRow = Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(
@@ -81,18 +79,17 @@ Widget buildNewsWidget(NewsModel news,BuildContext context) {
     width: double.infinity,
     child: imagesRow,
   );
-  bool readMore = false;
   Widget mainColumn = InkWell(
     onTap: () async {
-      context.push(EditNewsLetterScreen(newsModel: news));
+      context.push(DetailsNewsLetterScreen(newsModel: news));
     },
     child: SizedBox(
-      // height: 70.h, // افتراضي أن الارتفاع المخصص هنا 200 وحدة
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          dateRow,
+          firstRow,
           spacedImagesRow,
+          SizedBox(height: 1.h,),
           Text(
             news.head,
             style: TextStyle(fontSize: 8.sp, fontWeight: FontWeight.bold),

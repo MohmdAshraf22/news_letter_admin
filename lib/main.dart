@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       return MultiBlocProvider(
         providers: [
           BlocProvider<NewsLetterBloc>(
-              create: (BuildContext context) => sl()
+              create: (BuildContext context) => sl()..add(GetNewsEvent())
           ),
         ],
         child: MaterialApp(

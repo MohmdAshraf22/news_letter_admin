@@ -5,5 +5,5 @@ abstract class BaseMainRepository {
   Stream<List<NewsModel>> getNewsStream();
   Stream<bool> editNewsStream({required NewsModel newsModel});
   Stream<bool> postNewsStream({required NewsModel newsModel});
-  Stream<bool> deleteNewsStream({required String id,required String imageUrl});
+  Stream<bool> deleteNewsStream({required String id,required List<String> imagesUrl});
 }

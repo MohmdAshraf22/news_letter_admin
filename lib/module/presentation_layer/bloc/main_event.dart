@@ -17,8 +17,8 @@ class PostNewsEvent extends NewsLetterEvent {
 }
 class DeleteNewsEvent extends NewsLetterEvent {
   final String id;
-  final String imageUrl;
-  DeleteNewsEvent({required this.id,required this.imageUrl});
+  final List<String> imagesUrl;
+  DeleteNewsEvent({required this.id,required this.imagesUrl});
 }
 class EditNewsEvent extends NewsLetterEvent {
   final NewsModel newsModel;
