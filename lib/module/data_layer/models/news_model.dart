@@ -8,16 +8,17 @@ class NewsModel extends News {
     required super.date,
     required super.description,
     required super.head,
-    required super.images,
+    super.images,
+    super.imagesUrlDeleted,
     required super.imagesUrl,
   });
-  static News fromJson(QueryDocumentSnapshot<Object?> json) {
-    return News(
+  factory NewsModel.fromJson(QueryDocumentSnapshot<Object?> json) {
+    return NewsModel(
       id: json.id,
       date: json['date'],
       description: json['description'],
       head: json['head'],
-      imagesUrl: json['images'],
+      imagesUrl: List<String>.from(json['images']).toList(),
     );
   }
 

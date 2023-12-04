@@ -6,7 +6,7 @@ import 'core/services/dep_injection.dart';
 import 'core/services/firebase_options.dart';
 import 'core/utils/theme_manager.dart';
 import 'module/presentation_layer/bloc/main_bloc.dart';
-import 'module/presentation_layer/screens/post_news_screen.dart';
+import 'module/presentation_layer/screens/all_news_letter_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,14 +25,14 @@ class MyApp extends StatelessWidget {
     return Sizer(builder: (context, orientation, deviceType) {
       return MultiBlocProvider(
         providers: [
-          BlocProvider<MainBloc>(
+          BlocProvider<NewsLetterBloc>(
               create: (BuildContext context) => sl()
           ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: getAppTheme(),
-          home: const MainScreen(),
+          home: const AllNewsScreen(),
         ),
       );
     });

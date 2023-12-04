@@ -1,3 +1,5 @@
+import 'package:admin_news_letter/core/utils/color_manager.dart';
+import 'package:admin_news_letter/core/utils/navigation_manager.dart';
 import 'package:admin_news_letter/module/data_layer/models/news_model.dart';
 import 'package:admin_news_letter/module/presentation_layer/components/components.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +9,24 @@ import 'package:sizer/sizer.dart';
 import '../../../core/services/dep_injection.dart';
 import '../bloc/main_bloc.dart';
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+class PostNewsScreen extends StatelessWidget {
+  const PostNewsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     TextEditingController descriptionController = TextEditingController();
     TextEditingController headController = TextEditingController();
-    MainBloc bloc = sl()..add(GetNewsEvent());
+    NewsLetterBloc bloc = sl();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    return BlocBuilder<MainBloc, MainState>(
+    return BlocBuilder<NewsLetterBloc, NewsLetterState>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {
+                  context.pop();
+                },
+                icon: Icon(Icons.arrow_back_ios_new,size: 8.sp,)),
             title: Center(
               child: Text(
                 "Add News",
@@ -69,13 +76,27 @@ class MainScreen extends StatelessWidget {
                     bloc.pickedImages.isNotEmpty
                         ? Wrap(
                             children: bloc.pickedImages.map((image) {
-                              return Card(
-                                elevation: 2.sp,
-                                child: SizedBox(
-                                  height: 50.sp,
-                                  width: 50.sp,
-                                  child: Image.memory(image.imageMemory),
-                                ),
+                              return Stack(
+                                children: [
+                                  Card(
+                                    elevation: 2.sp,
+                                    child: SizedBox(
+                                      height: 50.sp,
+                                      width: 50.sp,
+                                      child: Image.memory(image.imageMemory),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      bloc.add(DeletePickedImageEvent(
+                                          imageData: image));
+                                    },
+                                    icon: Container(
+                                      color: ColorManager.white,
+                                      child: const Icon(Icons.close),
+                                    ),
+                                  ),
+                                ],
                               );
                             }).toList(),
                           )

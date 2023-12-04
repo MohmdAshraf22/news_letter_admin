@@ -39,6 +39,8 @@ dependencies:
   get_it:
   equatable:
   image_picker: ^1.0.4
+  readmore: ^2.2.0
+  http:
   # bloc
   bloc:
   flutter_bloc:

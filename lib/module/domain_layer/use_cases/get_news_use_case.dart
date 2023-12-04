@@ -1,11 +1,11 @@
 
-import '../entities/news.dart';
+import '../../data_layer/models/news_model.dart';
 import '../repsitories/base_news_repository.dart';
 
 class GetNewsUseCase {
   final BaseMainRepository baseMainRepository;
   GetNewsUseCase(this.baseMainRepository);
-  Stream<List<News>> get() {
+  Stream<List<NewsModel>> get() {
     return baseMainRepository.getNewsStream();
   }
 }

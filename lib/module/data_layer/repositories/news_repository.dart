@@ -10,7 +10,7 @@ class MainRepository extends BaseMainRepository {
   MainRepository(this.baseMainRemoteDataSource);
 
   @override
-  Stream<List<News>> getNewsStream() {
+  Stream<List<NewsModel>> getNewsStream() {
     return baseMainRemoteDataSource.getNewsStream();
   }
   @override

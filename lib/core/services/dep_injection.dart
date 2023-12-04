@@ -19,7 +19,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => baseMainRepository);
 
     /// blocs
-    MainBloc mainBloc = MainBloc(MainInitial());
+    NewsLetterBloc mainBloc = NewsLetterBloc(MainInitial());
     sl.registerLazySingleton(() => mainBloc);
 
   }

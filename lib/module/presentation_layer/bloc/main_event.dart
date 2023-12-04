@@ -1,19 +1,26 @@
 part of 'main_bloc.dart';
 
 @immutable
-abstract class MainEvent {}
-class GetNewsEvent extends MainEvent {}
-class PickImagesEvent extends MainEvent {}
-class PostNewsEvent extends MainEvent {
+abstract class NewsLetterEvent {}
+class GetNewsEvent extends NewsLetterEvent {}
+class PickImagesEvent extends NewsLetterEvent {}
+class DeletePickedImageEvent extends NewsLetterEvent {
+  final ImageData imageData;
+  DeletePickedImageEvent({required this.imageData});
+}class DeleteImageUrlEvent extends NewsLetterEvent {
+  final String imageUrl;
+  DeleteImageUrlEvent({required this.imageUrl});
+}
+class PostNewsEvent extends NewsLetterEvent {
   final NewsModel newsModel;
   PostNewsEvent({required this.newsModel});
 }
-class DeleteNewsEvent extends MainEvent {
+class DeleteNewsEvent extends NewsLetterEvent {
   final String id;
   final String imageUrl;
   DeleteNewsEvent({required this.id,required this.imageUrl});
 }
-class EditNewsEvent extends MainEvent {
+class EditNewsEvent extends NewsLetterEvent {
   final NewsModel newsModel;
   EditNewsEvent({required this.newsModel});
 }

@@ -5,7 +5,7 @@ import '../../domain_layer/entities/news.dart';
 import '../models/news_model.dart';
 
 abstract class BaseMainRemoteDataSource {
-  Stream<List<News>> getNewsStream();
+  Stream<List<NewsModel>> getNewsStream();
   Stream<bool> postNewsStream({required NewsModel newsModel});
   Stream<bool> editNewsStream({required NewsModel newsModel});
   Stream<bool> deleteNewsStream({required String id, required String imageUrl});
@@ -16,7 +16,7 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
       FirebaseFirestore.instance.collection("news");
 
   @override
-  Stream<List<News>> getNewsStream() {
+  Stream<List<NewsModel>> getNewsStream() {
     return newsCollection.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
         return NewsModel.fromJson(doc);
@@ -41,10 +41,21 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
   @override
   Stream<bool> editNewsStream({required NewsModel newsModel}) {
     return Stream.fromFuture(() async {
-      for (var image in newsModel.images!) {
-        String downloadUrl = await uploadImageToFirebaseStorage(
-            filePath: image.imageMemory, fileName: image.imageName);
-        newsModel.imagesUrl.add(downloadUrl);
+      if (newsModel.imagesUrlDeleted != null) {
+        print("object");
+        print(newsModel.imagesUrlDeleted );
+        for (String image in newsModel.imagesUrlDeleted!) {
+          print(image);
+          deleteImageFromFirebaseStorage(getImageName(url: image));
+          print("deleted");
+        }
+      }
+      if (newsModel.images != null) {
+        for (var image in newsModel.images!) {
+          String downloadUrl = await uploadImageToFirebaseStorage(
+              filePath: image.imageMemory, fileName: image.imageName);
+          newsModel.imagesUrl.add(downloadUrl);
+        }
       }
       try {
         await newsCollection.doc(newsModel.id).update(newsModel.toJson());
@@ -85,11 +96,16 @@ class MainRemoteDataSource extends BaseMainRemoteDataSource {
     return "";
   }
 
+  void deleteImageFromFirebaseStorage(String fileName) async {
+    FirebaseStorage.instance.ref().child("news/$fileName}").delete();
+  }
+
   String getImageName({required String url}) {
     Uri uri = Uri.parse(url);
     String decodedPath = Uri.decodeComponent(uri.path);
     List<String> pathSegments = decodedPath.split('/');
     String imageName = pathSegments.last;
+    print(imageName);
     return imageName;
   }
 }

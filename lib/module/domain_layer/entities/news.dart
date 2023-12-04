@@ -7,13 +7,15 @@ class News extends Equatable {
   String description;
   String date;
   List<ImageData>? images;
-  List<dynamic> imagesUrl;
+  List<String> imagesUrl;
+  List<String>? imagesUrlDeleted;
   News({
     required this.id,
     required this.date,
     required this.description,
     required this.head,
     this.images,
+    this.imagesUrlDeleted,
     required this.imagesUrl,
   });
   @override
