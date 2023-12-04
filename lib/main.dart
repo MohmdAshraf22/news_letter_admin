@@ -6,7 +6,7 @@ import 'core/services/dep_injection.dart';
 import 'core/services/firebase_options.dart';
 import 'core/utils/theme_manager.dart';
 import 'module/presentation_layer/bloc/main_bloc.dart';
-import 'module/presentation_layer/screens/main_screen.dart';
+import 'module/presentation_layer/screens/post_news_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
